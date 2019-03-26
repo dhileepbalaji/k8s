@@ -2,7 +2,7 @@
 
 kubectl create clusterrolebinding clusteradmin-gcpaccount --clusterrole=cluster-admin --user=<>@gmail.com
 
-# Create Namespace for logging
+# Create Namespace for monitoring
 
 kubectl create namespace monitoring
 
