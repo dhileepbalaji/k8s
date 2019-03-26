@@ -1,6 +1,5 @@
 # For demo we are using GKE, create admin user role binding for installing prometheus cluster roles
 
-
 kubectl create clusterrolebinding clusteradmin-gcpaccount --clusterrole=cluster-admin --user=<>@gmail.com
 
 # Create Namespace for logging
@@ -21,24 +20,24 @@ helm install  --name my-nginx-ingress stable/nginx-ingress --set rbac.create=tru
 
 # Deploy Prometheus to K8s cluster
 
-kubectl apply -f prometheus/
+kubectl apply -f prometheus/ -n monitoring
 
+# Deploy Grafana to K8s cluster
 
+kubectl apply -f grafana/ -n monitoring
 
+# Deploy node-exporter to K8s cluster
 
-# Deploy Fluentd Deployment to K8s cluster
+kubectl apply -f node-exporter/ -n monitoring
 
-helm install fluentd/ --name fluentd --set output.host=elasticsearch-client --set persis
-tence.enabled=true --set replicaCount=1 --set service.externalPort=24224 --set service.ports[0].containerPort=24224 --set output.port=9200 --namespace logging
+# Deploy kube-state-metrics to K8s cluster
 
-# Run Test Nginx container to log messages:
+kubectl apply -f kube-state-metrics/ -n monitoring
 
-kubectl run nginx --image=nginx -n logging
+# Deploy ingress object for grafana/prometheus public access to K8s cluster
 
-kubectl port-forward <nginxpodname> 8081:80 -n logging &
+kubectl apply -f ingress.yaml
 
-while true; do curl localhost:8081; sleep 2; done
+# Access the Logs from Grafana UI using Ingress Controller Public IP as DNS record,
 
-# Access the Logs from Kibana UI using Ingress Controller Public IP as DNS record,
-
-<ingress controller IP> A kibana.cloudnloud.in
+<ingress controller IP> A grafana.cloudnloud.in
